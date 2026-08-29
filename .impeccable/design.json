@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-29T20:31:52.127Z",
+  "title": "Design System: Draper Dirtworks",
+  "extensions": {
+    "colorMeta": {
+      "navy": { "role": "primary", "displayName": "Deep Navy", "canonical": "#002543" },
+      "navy-deep": { "role": "primary", "displayName": "Navy Deep", "canonical": "#001a30" },
+      "navy-mid": { "role": "neutral", "displayName": "Navy Mid (chrome/scrollbar only)", "canonical": "#2c6690" },
+      "red": { "role": "secondary", "displayName": "Brick Red", "canonical": "#9e212b" },
+      "red-bright": { "role": "secondary", "displayName": "Red Bright (hover only)", "canonical": "#b8323c" },
+      "white": { "role": "neutral", "displayName": "White", "canonical": "#ffffff" },
+      "paper": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#f6f4f1" },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#e2ddd4" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1b232c" },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#4c5866" },
+      "on-navy-muted": { "role": "neutral", "displayName": "On-Navy Muted", "canonical": "#aebfcd" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display (Oswald)", "purpose": "Every heading and button label, always uppercase." },
+      "body": { "displayName": "Body (Public Sans)", "purpose": "Paragraph copy and supporting labels, sentence case." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 1px 2px rgba(0,21,41,0.06), 0 8px 24px rgba(0,21,41,0.08)", "purpose": "Resting state for buttons and service cards." },
+      { "name": "lift", "value": "0 4px 10px rgba(0,21,41,0.12), 0 16px 40px rgba(0,21,41,0.14)", "purpose": "Hover state and the hero proof-strip's dock." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The hero's one authored entrance (staggered fade/rise) and all hover transitions." }
+    ],
+    "breakpoints": [
+      { "name": "nav-collapse", "value": "920px" },
+      { "name": "grid-collapse", "value": "880px" },
+      { "name": "section-tight", "value": "720px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Red CTA button, uppercase Oswald label, used for the estimate/call actions.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Request an Estimate</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 10px; font-family: 'Oswald', 'Arial Narrow', sans-serif; font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.02em; text-decoration: none; padding: 15px 28px; border-radius: 4px; background: #9e212b; color: #ffffff; box-shadow: 0 1px 2px rgba(0,21,41,0.06), 0 8px 24px rgba(0,21,41,0.08); transition: background-color 0.18s cubic-bezier(0.16,1,0.3,1), box-shadow 0.18s cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: #b8323c; box-shadow: 0 4px 10px rgba(0,21,41,0.12), 0 16px 40px rgba(0,21,41,0.14); } .ds-btn-primary:focus-visible { outline: 3px solid #9e212b; outline-offset: 3px; }"
+    },
+    {
+      "name": "Service Card",
+      "kind": "card",
+      "refersTo": "card-service",
+      "description": "Icon-badge + heading + description card used for the three services.",
+      "html": "<article class=\"ds-card-service\"><div class=\"ds-card-service-icon\">&#9679;</div><h3>Excavation</h3><p>Site excavation, grading, and digging for driveways, foundations, and land prep.</p></article>",
+      "css": ".ds-card-service { background: #ffffff; border: 1px solid #e2ddd4; border-radius: 4px; padding: 36px 32px; transition: border-color 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s cubic-bezier(0.16,1,0.3,1), transform 0.2s cubic-bezier(0.16,1,0.3,1); } .ds-card-service:hover { border-color: #002543; box-shadow: 0 1px 2px rgba(0,21,41,0.06), 0 8px 24px rgba(0,21,41,0.08); transform: translateY(-3px); } .ds-card-service-icon { width: 56px; height: 56px; border-radius: 4px; background: #002543; color: #ffffff; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; } .ds-card-service h3 { font-family: 'Oswald', sans-serif; font-size: 1.3rem; text-transform: uppercase; font-weight: 600; margin: 0 0 12px; color: #1b232c; } .ds-card-service p { margin: 0; color: #4c5866; font-size: 0.98rem; font-family: 'Public Sans', sans-serif; }"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Header nav link with a red underline that grows in on hover/active.",
+      "html": "<a class=\"ds-nav-link\" href=\"#\">Services</a>",
+      "css": ".ds-nav-link { text-decoration: none; font-weight: 600; font-size: 0.95rem; color: #1b232c; position: relative; padding-block: 4px; font-family: 'Public Sans', sans-serif; } .ds-nav-link::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -2px; height: 2px; background: #9e212b; transition: right 0.2s cubic-bezier(0.16,1,0.3,1); } .ds-nav-link:hover::after { right: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Foreman's Word",
+    "overview": "The site reads like a straight answer from someone whose word is their bond: a licensed local outfit that puts its proof (license, service radius, scope) in front of you before it asks for anything. It is the conventional contractor-site category, played straight and executed at full craft, not reinvented — the user's own explicit choice after seeing three more novel directions (an aerial service-radius map, a jobsite-permit-board system, a technical patent-drawing sheet). Deep navy carries authority and structure across the largest fields (header, hero, footer, closing CTA band); brick red is spent narrowly, on calls to action and small accents, never as an equal partner to navy. Both colors were sampled directly from the client's own logo artwork, not chosen freehand. The system is deliberately unglamorous: no photography (none exists yet), no invented stats or testimonials, no decorative flourish standing in for content.",
+    "keyCharacteristics": [
+      "Navy-dominant, red-disciplined: red never exceeds small accent scale.",
+      "Authored one-stroke line icons stand in for photography; no stock imagery, no emoji-as-icon.",
+      "One authored motion moment (the hero's staggered entrance); no scroll-triggered reveal on every section.",
+      "Condensed uppercase display type for every heading; a plain workhorse sans for body copy."
+    ],
+    "rules": [
+      { "name": "The Rarity Rule", "body": "Red is a signal, not a field. It appears on buttons, small icon accents, and one headline line — never as a section background or a large fill.", "section": "colors" },
+      { "name": "The All-Caps Display Rule", "body": "Every heading and every button label is uppercase in Oswald. Body copy is never uppercase.", "section": "typography" },
+      { "name": "The Flat-Until-It-Matters Rule", "body": "Shadows appear only on interactive controls (hover) and the one signature docked composition (the hero proof strip).", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep red under roughly 10% of any section's visual weight — buttons and small accents only.",
+      "Do use the 4px radius everywhere; don't introduce a second radius scale.",
+      "Do theme browser chrome (selection, focus ring, scrollbar) from the palette rather than leaving browser defaults.",
+      "Do author icons as single-stroke inline SVG in the existing line weight; never substitute an emoji or a different icon grammar."
+    ],
+    "donts": [
+      "Don't use a kicker/eyebrow label above any heading — the heading carries its own weight.",
+      "Don't add photography that isn't real; the system was deliberately built photo-free until real jobsite photos and video arrive.",
+      "Don't invent stats, testimonials, or credentials beyond what PRODUCT.md confirms.",
+      "Don't let navy and red share equal billing in a single composition — navy is the field, red is the signal."
+    ]
+  }
+}
