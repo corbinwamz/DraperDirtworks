@@ -303,6 +303,11 @@ section {
   color: var(--color-navy-800);
 }
 
+/* .main-nav a's color would otherwise beat .btn-primary's on specificity */
+.main-nav .btn-primary {
+  color: var(--color-white);
+}
+
 .main-nav a::after {
   content: "";
   position: absolute;
