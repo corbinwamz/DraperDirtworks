@@ -34,6 +34,15 @@ const PROJECT_TYPE_LABELS = {
   "existing-commercial": "Existing Commercial",
 };
 
+const SERVICE_LABELS = {
+  excavation: "Excavation",
+  "site-development": "Site Development",
+  "septic-tank": "Septic Tank",
+  grading: "Grading",
+  "site-cleanup": "Site Cleanup",
+  other: "Other",
+};
+
 function cleanText(value, maxLen) {
   let s = typeof value === "string" ? value.trim() : "";
   if (s.length > maxLen) s = s.slice(0, maxLen);
@@ -242,6 +251,10 @@ module.exports = async function handler(req, res) {
   const unit = cleanEnum(rawUnit, UNIT_LABELS);
   const projectType = cleanEnum(firstValue(fields.projectType), PROJECT_TYPE_LABELS);
 
+  const rawService = firstValue(fields.service);
+  const service = cleanEnum(rawService, SERVICE_LABELS);
+  const serviceOther = cleanText(firstValue(fields.serviceOther), 120);
+
   const rawAmount = String(firstValue(fields.amount) || "").trim();
   const amount = /^[0-9]+$/.test(rawAmount) ? parseInt(rawAmount, 10) : null;
 
@@ -258,18 +271,39 @@ module.exports = async function handler(req, res) {
     if (!unit) errors.push("unit");
   } else if (type === "excavation") {
     if (!projectType) errors.push("projectType");
+    if (!service) errors.push("service");
+    if (rawService === "other" && !serviceOther) errors.push("serviceOther");
   }
 
   if (errors.length) {
     return res.status(400).json({ ok: false, error: "Invalid or missing fields", fields: errors });
   }
 
+  const serviceValue =
+    rawService === "other" && serviceOther ? `Other: ${serviceOther}` : service || "";
+
   const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Boise" });
 
   // Excavation always goes to the owner for manual review/quote regardless of
-  // distance (matches the page's existing copy), so it never needs a geocode
-  // call at all — one less paid API request per excavation lead.
+  // distance (matches the page's existing copy) — the geocode here is only to
+  // fill in the Distance column and confirm the address is real; it never
+  // gates eligibility the way it does for hauling.
   if (type === "excavation") {
+    let companyCoords, siteCoords;
+    try {
+      companyCoords = await getCompanyCoords();
+      siteCoords = await geocodeAddress(address);
+    } catch (err) {
+      console.error("Failed to geocode for estimate submission:", err);
+      return res.status(500).json({ ok: false, error: "Could not submit request, please try again" });
+    }
+
+    if (!siteCoords) {
+      return res.status(400).json({ ok: false, error: "Could not verify that address", fields: ["address"] });
+    }
+
+    const excavDistance = haversineMiles(companyCoords, siteCoords).toFixed(1);
+
     const row = [
       "New", // Status
       timestamp,
@@ -281,8 +315,9 @@ module.exports = async function handler(req, res) {
       "", // Amount (hauling only)
       "", // Unit (hauling only)
       projectType || "",
+      serviceValue,
       address,
-      "", // Distance (mi) - not computed for excavation
+      excavDistance,
       message,
       "N/A", // Quote - owner fills in after review
     ];
@@ -347,6 +382,7 @@ module.exports = async function handler(req, res) {
     String(amount),
     unit || "",
     "", // Project Type (excavation only)
+    "", // Service (excavation only)
     address,
     distanceMiles.toFixed(1),
     message,

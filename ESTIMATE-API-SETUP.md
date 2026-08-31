@@ -27,15 +27,15 @@ Add these to **both** local `.env` and the Vercel project's Environment Variable
 
 - **Hauling**, in-area (≤15 mi) **and** ≤4 loads → never written. The customer gets an instant placeholder price on the page and that's it.
 - **Hauling**, out-of-area or >4 loads → written only after the customer sees a "needs review" prompt and explicitly clicks **Submit For Review**.
-- **Excavation** → always written (unchanged from before; its copy has always promised an owner callback regardless of distance, so it skips the geocode/distance check entirely).
+- **Excavation** → always written once the address is verified (its copy has always promised an owner callback regardless of distance). The address must still successfully geocode — an address the Geocoding API can't find is rejected with a "Could not verify that address" error, same as hauling — but the resulting distance never gates eligibility, it's only recorded in `Distance (mi)` for the owner's reference.
 
 - [ ] Create an `Estimates` tab in that spreadsheet.
 - [ ] Add header row matching the column order the code writes:
 
-  | Status | Timestamp | Type | Name | Phone | Email | Material | Amount | Unit | Project Type | Address | Distance (mi) | Message | Quote |
-  |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+  | Status | Timestamp | Type | Name | Phone | Email | Material | Amount | Unit | Project Type | Service | Address | Distance (mi) | Message | Quote |
+  |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
-  `Quote` defaults to `N/A` on every new row; the owner overwrites it by hand once a job is reviewed. `Distance (mi)` is blank on excavation rows since those never geocode.
+  `Quote` defaults to `N/A` on every new row; the owner overwrites it by hand once a job is reviewed.
 
 - [ ] Confirm the service account in `GOOGLE_SERVICE_ACCOUNT_KEY` has edit access to this spreadsheet (it already does, since `Applications` works).
 
@@ -59,6 +59,7 @@ Protects `/api/estimate` from repeated/scripted submissions burning Geocoding AP
 - [ ] Submit the hauling form with a real nearby address and ≤4 loads → should show the **instant estimate** panel with a placeholder dollar amount, form hides, **no row written** to the sheet.
 - [ ] Submit the hauling form with an address >15 miles away → should show the "outside our 15-mile service area" review prompt; clicking **Submit For Review** writes a row and shows the normal "Request Received" success panel; clicking **Go Back & Edit** returns to the form with nothing submitted.
 - [ ] Submit the hauling form in-area but with >4 loads → should show the ">4 loads needs a closer look" review prompt with the same confirm/cancel behavior.
-- [ ] Submit with a garbage/nonexistent address → should show the "Could not verify that address" error on the form, no row written.
-- [ ] Submit the excavation form and confirm its row always appears, with `Material`/`Amount`/`Unit`/`Distance (mi)` blank and `Project Type` filled in.
+- [ ] Submit the hauling form with a garbage/nonexistent address → should show the "We couldn't find that address" error on the form, form stays visible with all previously entered values intact, no row written.
+- [ ] Submit the excavation form with a real address and confirm its row appears, with `Material`/`Amount`/`Unit` blank and `Project Type`/`Service`/`Distance (mi)` filled in. Selecting "Other" for Service should write `Other: <their text>` to the `Service` column.
+- [ ] Submit the excavation form with a garbage/nonexistent address → should show the same "We couldn't find that address" error on the form, form stays visible with all previously entered values intact, no row written.
 - [ ] Check Vercel function logs for any geocoding or Sheets errors.

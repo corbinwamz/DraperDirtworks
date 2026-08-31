@@ -670,6 +670,87 @@ section {
   }
 }
 
+/* Services section: two primary hub cards + a compact row of
+   the specific jobs each hub covers, so the section reads as
+   one hierarchy instead of N equal-weight cards. */
+.services-primary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-bottom: 56px;
+}
+
+@media (max-width: 720px) {
+  .services-primary {
+    grid-template-columns: 1fr;
+    margin-bottom: 40px;
+  }
+}
+
+.services-extra-title {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+
+.services-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.service-tag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  padding: 12px 20px 12px 12px;
+  color: var(--color-ink);
+  text-decoration: none;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  transition:
+    border-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out),
+    transform 0.2s var(--ease-out);
+}
+
+.service-tag:hover {
+  border-color: var(--color-navy-800);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.service-tag-icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-navy-800);
+  border-radius: var(--radius);
+}
+
+.service-tag-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-white);
+}
+
+@media (max-width: 560px) {
+  .services-tag-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 /* ============================================================
    Process steps
    ============================================================ */
@@ -999,6 +1080,10 @@ section {
   border: none;
   margin: 0;
   padding: 0;
+}
+
+.form-field[hidden] {
+  display: none;
 }
 
 .form-field-full {

@@ -238,6 +238,24 @@
               </div>
 
               <div class="form-field form-field-full">
+                <label for="excav-service">Service <span class="required">*</span></label>
+                <select id="excav-service" name="service" required>
+                  <option value="" disabled selected>Select a service</option>
+                  <option value="excavation">Excavation</option>
+                  <option value="site-development">Site Development</option>
+                  <option value="septic-tank">Septic Tank</option>
+                  <option value="grading">Grading</option>
+                  <option value="site-cleanup">Site Cleanup</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-field form-field-full" id="excav-service-other-field" hidden>
+                <label for="excav-service-other">Please Describe <span class="required">*</span></label>
+                <input type="text" id="excav-service-other" name="serviceOther" maxlength="120" />
+              </div>
+
+              <div class="form-field form-field-full">
                 <label for="excav-address">Project Address <span class="required">*</span></label>
                 <input type="text" id="excav-address" name="address" autocomplete="street-address" required />
               </div>
@@ -263,7 +281,7 @@
           </div>
 
           <p class="form-error" id="excavation-error" role="alert" hidden>
-            Something went wrong submitting your request. Please try again or call us at
+            <span id="excavation-error-message">Something went wrong submitting your request. Please try again or call us at</span>
             <a href="tel:+12084077948">(208) 407-7948</a>.
           </p>
         </div>

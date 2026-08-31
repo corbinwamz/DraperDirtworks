@@ -93,10 +93,11 @@
     });
   });
 
-  function bindLeadForm(formId, successId, errorId) {
+  function bindLeadForm(formId, successId, errorId, errorMessageId) {
     var form = document.getElementById(formId);
     var success = document.getElementById(successId);
     var error = document.getElementById(errorId);
+    var errorMessage = errorMessageId ? document.getElementById(errorMessageId) : null;
     if (!form || !success) return;
 
     form.addEventListener("submit", function (event) {
@@ -118,12 +119,27 @@
         body: formData,
       })
         .then(function (response) {
-          if (!response.ok) throw new Error("Submission failed");
+          return response.json().then(function (data) {
+            if (!response.ok || !data.ok) {
+              var err = new Error(data.error || "Submission failed");
+              err.fields = data.fields;
+              throw err;
+            }
+            return data;
+          });
+        })
+        .then(function () {
           form.hidden = true;
           success.hidden = false;
           success.scrollIntoView({ behavior: "smooth", block: "start" });
         })
-        .catch(function () {
+        .catch(function (err) {
+          if (errorMessage) {
+            errorMessage.textContent =
+              err && err.fields && err.fields.indexOf("address") !== -1
+                ? "We couldn't find that address. Please double check it and try again, or call us at"
+                : "Something went wrong submitting your request. Please try again or call us at";
+          }
           if (error) error.hidden = false;
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -254,8 +270,21 @@
     }
   }
 
+  var excavServiceSelect = document.getElementById("excav-service");
+  var excavServiceOtherField = document.getElementById("excav-service-other-field");
+  var excavServiceOtherInput = document.getElementById("excav-service-other");
+
+  if (excavServiceSelect && excavServiceOtherField && excavServiceOtherInput) {
+    excavServiceSelect.addEventListener("change", function () {
+      var isOther = excavServiceSelect.value === "other";
+      excavServiceOtherField.hidden = !isOther;
+      excavServiceOtherInput.required = isOther;
+      if (!isOther) excavServiceOtherInput.value = "";
+    });
+  }
+
   bindHaulingForm();
-  bindLeadForm("excavation-form", "excavation-success", "excavation-error");
+  bindLeadForm("excavation-form", "excavation-success", "excavation-error", "excavation-error-message");
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var contours = document.querySelector(".hero-contours");
