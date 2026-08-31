@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Plain static HTML/CSS/JS frontend with a small backend (e.g. Node/Express or similar) for API routes — form handling, Google Routes API calls, and database operations. User chose this explicitly over a framework.
+Plain static HTML/CSS/JS frontend with a small backend (e.g. Node/Express or similar) for API routes — form handling, Google Geocoding API calls, and database operations. User chose this explicitly over a framework.
 
 ## Users
 
@@ -27,11 +27,11 @@ Success means qualified estimate submissions from customers within the service a
 
 ## Positioning
 
-A local excavation company whose service-area eligibility is determined programmatically: the backend calls the Google Routes API to compute real driving distance from the company's location to the submitted project address, and enforces a configured service radius as the source of truth (not user-declared location or straight-line distance).
+A local excavation company whose service-area eligibility is determined programmatically: the backend geocodes the submitted project address (Google Geocoding API) and compares straight-line distance from the company's location against a configured service radius, enforced server-side as the source of truth (not user-declared location). The owner has confirmed straight-line distance is acceptable for this business, rather than driving distance.
 
 ## Operating Context
 
-- **Estimates workflow:** user submits project info + address → backend calls Google Routes API → driving distance compared against `SERVICE_RADIUS_MILES` → eligibility determined server-side.
+- **Estimates workflow:** user submits project info + address → backend geocodes the address (Google Geocoding API, company address geocoded once at startup) → straight-line distance compared against `SERVICE_RADIUS_MILES` → eligibility determined server-side.
 - **Careers workflow:** user views open positions → submits application, optionally with a resume upload → data is validated/sanitized server-side and never exposed publicly.
 - Company location and service radius are configured via environment variables (`COMPANY_ADDRESS`, `SERVICE_RADIUS_MILES`, `GOOGLE_MAPS_API_KEY`), never hardcoded or exposed to the frontend.
 
@@ -41,7 +41,7 @@ A local excavation company whose service-area eligibility is determined programm
 - All application/estimate input must be validated and sanitized server-side.
 - Applicant information must never be exposed publicly.
 - API keys/secrets must never be exposed to the frontend or committed to git.
-- Google Routes API usage should be minimized/considered for cost (avoid unnecessary calls).
+- Google Geocoding API usage should be minimized/considered for cost (avoid unnecessary calls); the estimate endpoint is protected from abuse by a Vercel Firewall rate-limit rule.
 - Existing structure/functionality should be preserved unless a change is explicitly requested.
 
 ## Brand Commitments
@@ -65,6 +65,6 @@ A local excavation company whose service-area eligibility is determined programm
 
 1. Backend is the sole authority for service-area eligibility and data validation — never trust client-side checks.
 2. Protect applicant privacy and secrets by default; nothing sensitive reaches the frontend or a public response.
-3. Be deliberate with paid API calls (Google Routes) — avoid redundant or speculative requests.
+3. Be deliberate with paid API calls (Google Geocoding) — avoid redundant or speculative requests.
 4. Preserve working structure/functionality; change only what's explicitly asked for.
 5. Never fabricate evidence (photos, testimonials, credentials) — placeholder clearly until real assets land.

@@ -72,6 +72,191 @@
     });
   }
 
+  var tabButtons = document.querySelectorAll(".tab-btn");
+  var tabPanels = document.querySelectorAll(".tab-panel");
+
+  tabButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tabButtons.forEach(function (b) {
+        b.classList.remove("is-active");
+        b.setAttribute("aria-selected", "false");
+        b.tabIndex = -1;
+      });
+      tabPanels.forEach(function (p) {
+        p.hidden = true;
+      });
+
+      btn.classList.add("is-active");
+      btn.setAttribute("aria-selected", "true");
+      btn.tabIndex = 0;
+      document.getElementById(btn.getAttribute("aria-controls")).hidden = false;
+    });
+  });
+
+  function bindLeadForm(formId, successId, errorId) {
+    var form = document.getElementById(formId);
+    var success = document.getElementById(successId);
+    var error = document.getElementById(errorId);
+    if (!form || !success) return;
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      var submitBtn = form.querySelector("button[type=submit]");
+      var formData = new FormData(form);
+
+      if (error) error.hidden = true;
+      if (submitBtn) {
+        submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting…";
+      }
+
+      fetch("/api/estimate", {
+        method: "POST",
+        body: formData,
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Submission failed");
+          form.hidden = true;
+          success.hidden = false;
+          success.scrollIntoView({ behavior: "smooth", block: "start" });
+        })
+        .catch(function () {
+          if (error) error.hidden = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = submitBtn.dataset.originalText;
+          }
+        });
+    });
+  }
+
+  function bindHaulingForm() {
+    var form = document.getElementById("hauling-form");
+    var success = document.getElementById("hauling-success");
+    var error = document.getElementById("hauling-error");
+    var errorMessage = document.getElementById("hauling-error-message");
+    var instantResult = document.getElementById("hauling-instant-result");
+    var instantAmount = document.getElementById("hauling-instant-amount");
+    var reviewConfirm = document.getElementById("hauling-review-confirm");
+    var reviewMessage = document.getElementById("hauling-review-message");
+    var reviewConfirmBtn = document.getElementById("hauling-review-confirm-btn");
+    var reviewCancelBtn = document.getElementById("hauling-review-cancel-btn");
+    if (!form || !success) return;
+
+    var submitBtn = form.querySelector("button[type=submit]");
+    var currencyFormatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+    function setSubmitting(isSubmitting) {
+      if (!submitBtn) return;
+      submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+      submitBtn.disabled = isSubmitting;
+      submitBtn.textContent = isSubmitting ? "Submitting…" : submitBtn.dataset.originalText;
+    }
+
+    function submitEstimate(confirmSubmission) {
+      var formData = new FormData(form);
+      if (confirmSubmission) formData.set("confirm", "1");
+      return fetch("/api/estimate", { method: "POST", body: formData })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (!data.ok) {
+            var err = new Error(data.error || "Submission failed");
+            err.fields = data.fields;
+            throw err;
+          }
+          return data;
+        });
+    }
+
+    function showError(err) {
+      if (!error) return;
+      if (errorMessage) {
+        errorMessage.textContent =
+          err && err.fields && err.fields.indexOf("address") !== -1
+            ? "We couldn't find that address. Please double check it and try again, or call us at"
+            : "Something went wrong submitting your request. Please try again or call us at";
+      }
+      error.hidden = false;
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      if (error) error.hidden = true;
+      if (reviewConfirm) reviewConfirm.hidden = true;
+      setSubmitting(true);
+
+      submitEstimate(false)
+        .then(function (data) {
+          setSubmitting(false);
+
+          if (data.instant) {
+            form.hidden = true;
+            if (instantAmount) {
+              instantAmount.textContent = currencyFormatter.format(data.estimate.total);
+            }
+            if (instantResult) {
+              instantResult.hidden = false;
+              instantResult.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          } else if (data.needsReview) {
+            if (reviewMessage) {
+              reviewMessage.textContent = data.outOfArea
+                ? "Your address is outside our 15-mile service area, so we can't give you an instant price. Want to submit your request anyway? The owner will review it and follow up with a custom quote."
+                : "Jobs over four loads need a closer look for accurate pricing. Want to submit your request for review? The owner will follow up with a custom quote.";
+            }
+            if (reviewConfirm) {
+              reviewConfirm.hidden = false;
+              reviewConfirm.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
+        })
+        .catch(function (err) {
+          setSubmitting(false);
+          showError(err);
+        });
+    });
+
+    if (reviewConfirmBtn) {
+      reviewConfirmBtn.addEventListener("click", function () {
+        reviewConfirmBtn.disabled = true;
+        reviewConfirmBtn.textContent = "Submitting…";
+
+        submitEstimate(true)
+          .then(function () {
+            if (reviewConfirm) reviewConfirm.hidden = true;
+            form.hidden = true;
+            success.hidden = false;
+            success.scrollIntoView({ behavior: "smooth", block: "start" });
+          })
+          .catch(function (err) {
+            reviewConfirmBtn.disabled = false;
+            reviewConfirmBtn.textContent = "Submit For Review";
+            showError(err);
+          });
+      });
+    }
+
+    if (reviewCancelBtn) {
+      reviewCancelBtn.addEventListener("click", function () {
+        if (reviewConfirm) reviewConfirm.hidden = true;
+      });
+    }
+  }
+
+  bindHaulingForm();
+  bindLeadForm("excavation-form", "excavation-success", "excavation-error");
+
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var contours = document.querySelector(".hero-contours");
 

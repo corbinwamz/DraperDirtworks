@@ -303,8 +303,10 @@ section {
   color: var(--color-navy-800);
 }
 
-/* .main-nav a's color would otherwise beat .btn-primary's on specificity */
-.main-nav .btn-primary {
+/* Matches the specificity of .main-nav a[aria-current="page"] so this still
+   wins on the page the button links to (e.g. the "Get an Estimate" nav
+   button on estimate.html itself). */
+.main-nav a.btn-primary {
   color: var(--color-white);
 }
 
@@ -1021,6 +1023,7 @@ section {
 .form-field input[type="text"],
 .form-field input[type="tel"],
 .form-field input[type="email"],
+.form-field input[type="number"],
 .form-field select,
 .form-field textarea {
   font-family: var(--font-body);
@@ -1123,6 +1126,14 @@ section {
   color: var(--color-ink-muted);
 }
 
+.form-success .estimate-amount {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--color-navy-800);
+  margin: 4px 0 14px;
+}
+
 .form-error {
   max-width: 860px;
   margin-top: 28px;
@@ -1136,4 +1147,75 @@ section {
 .form-error a {
   color: inherit;
   text-decoration: underline;
+}
+
+/* ============================================================
+   Estimate tabs
+   ============================================================ */
+
+.estimate-tabs {
+  max-width: 860px;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 32px;
+  border-bottom: 1.5px solid var(--color-line);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 14px 20px;
+  margin-bottom: -1.5px;
+  cursor: pointer;
+  transition: color 0.18s var(--ease-out), border-color 0.18s var(--ease-out);
+}
+
+.tab-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.tab-btn:hover {
+  color: var(--color-navy-800);
+}
+
+.tab-btn.is-active {
+  color: var(--color-navy-800);
+  border-bottom-color: var(--color-red-600);
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .tab-nav {
+    flex-direction: column;
+    border-bottom: none;
+  }
+
+  .tab-btn {
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    justify-content: flex-start;
+  }
+
+  .tab-btn.is-active {
+    border-left-color: var(--color-red-600);
+    background: var(--color-white);
+  }
 }

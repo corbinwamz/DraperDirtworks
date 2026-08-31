@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Get an Estimate | Draper Dirtworks</title>
+<meta name="description" content="Request a hauling or excavation estimate from Draper Dirtworks. Job sites within 15 miles of Nampa, Idaho needing four loads or fewer get instant flat-rate pricing." />
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html" aria-label="Draper Dirtworks home">
+      <img src="assets/images/draper-dirtworks-logo.png" alt="Draper Dirtworks: Excavation &amp; Trucking" />
+    </a>
+
+    <nav class="main-nav" id="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="careers.html">Apply</a></li>
+      </ul>
+      <a class="btn btn-primary" href="estimate.html" aria-current="page">Get an Estimate</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="header-phone" href="tel:+12084077948">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 2 6a2 2 0 0 1 2-2z" />
+        </svg>
+        <span>(208) 407-7948</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Toggle navigation menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-contours" aria-hidden="true">
+      <svg viewBox="0 0 1200 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#ffffff" stroke-width="1.4">
+          <path d="M-50,120 C150,60 300,180 500,110 C700,40 850,150 1250,90" />
+          <path d="M-50,220 C200,150 350,260 550,200 C780,130 900,230 1250,180" />
+          <path d="M-50,320 C180,260 380,360 560,300 C760,240 950,330 1250,280" />
+          <path d="M-50,420 C220,370 400,460 600,400 C800,340 980,430 1250,380" />
+          <path d="M-50,520 C200,470 420,560 620,500 C820,440 1000,530 1250,480" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="container">
+      <div class="hero-inner">
+        <h1 class="hero-reveal" data-delay="1">Get An <em>Estimate</em></h1>
+        <p class="hero-sub hero-reveal" data-delay="2">
+          Tell us about your hauling or excavation project. Job sites within 15 miles
+          needing four loads or fewer get instant flat-rate pricing; everything else
+          gets a call back with a custom quote.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ESTIMATE FORM ============ -->
+  <section id="estimate-form" class="section-paper">
+    <div class="container">
+      <div class="section-head">
+        <h2>Request Your Estimate</h2>
+        <p>Choose hauling or excavation below, then fill in your project details.</p>
+      </div>
+
+      <div class="estimate-tabs">
+        <div class="tab-nav" role="tablist" aria-label="Estimate type">
+          <button type="button" class="tab-btn is-active" id="tab-hauling" role="tab" aria-selected="true" aria-controls="panel-hauling">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 16V8a1 1 0 0 1 1-1h9v9H3a1 1 0 0 1-1-1z" />
+              <path d="M12 11h4l3 3v2h-1" />
+              <path d="M12 16V9" />
+              <circle cx="6" cy="18" r="1.8" />
+              <circle cx="16" cy="18" r="1.8" />
+            </svg>
+            Hauling &amp; Trucking
+          </button>
+          <button type="button" class="tab-btn" id="tab-excavation" role="tab" aria-selected="false" aria-controls="panel-excavation" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 20h9" />
+              <path d="M6 20V10l10-6" />
+              <path d="M16 4l4 3-3 4-4-1z" />
+              <path d="M13 10l3 3-2 4H10" />
+            </svg>
+            Excavation &amp; Dirtworks
+          </button>
+        </div>
+
+        <!-- ===== HAULING PANEL ===== -->
+        <div class="tab-panel" id="panel-hauling" role="tabpanel" aria-labelledby="tab-hauling">
+          <form class="application-form" id="hauling-form" novalidate>
+            <input type="hidden" name="type" value="hauling" />
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="haul-name">Full Name <span class="required">*</span></label>
+                <input type="text" id="haul-name" name="name" autocomplete="name" required />
+              </div>
+
+              <div class="form-field">
+                <label for="haul-phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="haul-phone" name="phone" autocomplete="tel" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="haul-email">Email <span class="required">*</span></label>
+                <input type="email" id="haul-email" name="email" autocomplete="email" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="haul-material">Material <span class="required">*</span></label>
+                <select id="haul-material" name="material" required>
+                  <option value="" disabled selected>Select a material</option>
+                  <option value="3-4-chip">3/4" Chip</option>
+                  <option value="3-4-road-mix">3/4" Road Mix</option>
+                  <option value="drain-rock">Drain Rock</option>
+                  <option value="cobble-rock">Cobble Rock</option>
+                  <option value="pit-run">Pit Run</option>
+                  <option value="fill-dirt">Fill Dirt</option>
+                  <option value="screened-top-soil">Screened Top Soil</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="haul-unit">Unit <span class="required">*</span></label>
+                <select id="haul-unit" name="unit" required>
+                  <option value="" disabled selected>Select a unit</option>
+                  <option value="loads">Truck Loads</option>
+                  <option value="yards">Cubic Yards</option>
+                  <option value="tons">Tons</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="haul-amount">Amount <span class="required">*</span></label>
+                <input type="number" id="haul-amount" name="amount" min="1" step="1" inputmode="numeric" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="haul-address">Delivery Address <span class="required">*</span></label>
+                <input type="text" id="haul-address" name="address" autocomplete="street-address" placeholder="Where should we deliver or pick up from?" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="haul-message">Additional Details</label>
+                <textarea id="haul-message" name="message" rows="3" placeholder="Anything else we should know about the job"></textarea>
+              </div>
+            </div>
+
+            <p class="form-disclaimer">
+              Jobs within 15 miles needing four loads or fewer get instant flat-rate
+              pricing after we confirm your address; larger or farther jobs get a call
+              back with a custom quote. Your information is reviewed by Draper
+              Dirtworks only and is never shared or made public.
+            </p>
+
+            <button type="submit" class="btn btn-primary">Get My Estimate</button>
+          </form>
+
+          <div class="form-success" id="hauling-success" hidden>
+            <h3>Request Received</h3>
+            <p>Thanks for the request. We'll follow up with your pricing shortly.</p>
+          </div>
+
+          <div class="form-success" id="hauling-instant-result" hidden>
+            <h3>Your Instant Estimate</h3>
+            <p class="estimate-amount" id="hauling-instant-amount">$0</p>
+            <p>This is a preliminary estimate based on standard rates and is subject to
+              confirmation. We'll follow up to finalize your order.</p>
+          </div>
+
+          <div class="form-success" id="hauling-review-confirm" hidden>
+            <h3>Let's Take A Closer Look</h3>
+            <p id="hauling-review-message"></p>
+            <div class="hero-actions">
+              <button type="button" class="btn btn-primary" id="hauling-review-confirm-btn">Submit For Review</button>
+              <button type="button" class="btn btn-outline-navy" id="hauling-review-cancel-btn">Go Back &amp; Edit</button>
+            </div>
+          </div>
+
+          <p class="form-error" id="hauling-error" role="alert" hidden>
+            <span id="hauling-error-message">Something went wrong submitting your request. Please try again or call us at</span>
+            <a href="tel:+12084077948">(208) 407-7948</a>.
+          </p>
+        </div>
+
+        <!-- ===== EXCAVATION PANEL ===== -->
+        <div class="tab-panel" id="panel-excavation" role="tabpanel" aria-labelledby="tab-excavation" hidden>
+          <form class="application-form" id="excavation-form" novalidate>
+            <input type="hidden" name="type" value="excavation" />
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="excav-name">Full Name <span class="required">*</span></label>
+                <input type="text" id="excav-name" name="name" autocomplete="name" required />
+              </div>
+
+              <div class="form-field">
+                <label for="excav-phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="excav-phone" name="phone" autocomplete="tel" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="excav-email">Email <span class="required">*</span></label>
+                <input type="email" id="excav-email" name="email" autocomplete="email" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="excav-project-type">Project Type <span class="required">*</span></label>
+                <select id="excav-project-type" name="projectType" required>
+                  <option value="" disabled selected>Select a project type</option>
+                  <option value="new-residential">New Residential</option>
+                  <option value="remodel">Remodel</option>
+                  <option value="demolition">Demolition</option>
+                  <option value="new-commercial">New Commercial</option>
+                  <option value="existing-commercial">Existing Commercial</option>
+                </select>
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="excav-address">Project Address <span class="required">*</span></label>
+                <input type="text" id="excav-address" name="address" autocomplete="street-address" required />
+              </div>
+
+              <div class="form-field form-field-full">
+                <label for="excav-message">Project Details</label>
+                <textarea id="excav-message" name="message" rows="4" placeholder="Scope of work, timeline, or anything else we should know"></textarea>
+              </div>
+            </div>
+
+            <p class="form-disclaimer">
+              The owner will review your project and reach out directly with a quote.
+              Your information is reviewed by Draper Dirtworks only and is never shared
+              or made public.
+            </p>
+
+            <button type="submit" class="btn btn-primary">Request Estimate</button>
+          </form>
+
+          <div class="form-success" id="excavation-success" hidden>
+            <h3>Request Received</h3>
+            <p>Thanks for the request. The owner will give you a call to talk through your project.</p>
+          </div>
+
+          <p class="form-error" id="excavation-error" role="alert" hidden>
+            Something went wrong submitting your request. Please try again or call us at
+            <a href="tel:+12084077948">(208) 407-7948</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA BAND ============ -->
+  <section class="cta-band">
+    <div class="container">
+      <h2>Prefer To Talk It Through?</h2>
+      <p>Call us directly and we'll walk through your project over the phone.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="tel:+12084077948">Call (208) 407-7948</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="assets/images/draper-dirtworks-logo.png" alt="Draper Dirtworks: Excavation &amp; Trucking" />
+        <p>Licensed, insured excavation and trucking, based in Nampa, Idaho.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Site</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="excavation.html">Excavation</a></li>
+          <li><a href="hauling.html">Hauling &amp; Trucking</a></li>
+          <li><a href="careers.html">Apply</a></li>
+          <li><a href="estimate.html">Get an Estimate</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:+12084077948">(208) 407-7948</a></li>
+          <li>7325 Airport Rd<br />Nampa, ID 83687</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Draper Dirtworks. All rights reserved.</span>
+      <span>Licensed &amp; Insured · Serving the Treasure Valley</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
