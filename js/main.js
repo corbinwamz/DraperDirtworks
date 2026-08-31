@@ -23,6 +23,30 @@
     });
   }
 
+  var resumeInput = document.getElementById("app-resume");
+  var resumeName = document.getElementById("app-resume-name");
+
+  if (resumeInput && resumeName) {
+    resumeInput.addEventListener("change", function () {
+      resumeName.textContent = resumeInput.files.length
+        ? resumeInput.files[0].name
+        : "No file selected (optional)";
+    });
+  }
+
+  var applicationForm = document.getElementById("application-form");
+  var applicationSuccess = document.getElementById("application-success");
+
+  if (applicationForm && applicationSuccess) {
+    applicationForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!applicationForm.reportValidity()) return;
+      applicationForm.hidden = true;
+      applicationSuccess.hidden = false;
+      applicationSuccess.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var contours = document.querySelector(".hero-contours");
 
