@@ -50,6 +50,8 @@ Never expose API keys or secrets to the frontend or commit them to Git.
 
 ### Backend
 
+deployment will eventually be on vercel
+
 Responsible for:
 
 * API endpoints

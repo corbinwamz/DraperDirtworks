@@ -1,0 +1,26 @@
+{
+  "name": "draperdirtworks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corbinwamz/DraperDirtworks.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/corbinwamz/DraperDirtworks/issues"
+  },
+  "homepage": "https://github.com/corbinwamz/DraperDirtworks#readme",
+  "dependencies": {
+    "file-type": "^22.0.2",
+    "formidable": "^3.5.4",
+    "googleapis": "^176.0.0"
+  }
+}

@@ -1122,3 +1122,18 @@ section {
 .form-success p {
   color: var(--color-ink-muted);
 }
+
+.form-error {
+  max-width: 860px;
+  margin-top: 28px;
+  padding: 16px 20px;
+  border: 1.5px solid var(--color-red-600);
+  border-radius: var(--radius);
+  color: var(--color-red-600);
+  font-weight: 500;
+}
+
+.form-error a {
+  color: inherit;
+  text-decoration: underline;
+}

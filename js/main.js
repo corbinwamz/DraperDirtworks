@@ -36,14 +36,39 @@
 
   var applicationForm = document.getElementById("application-form");
   var applicationSuccess = document.getElementById("application-success");
+  var applicationError = document.getElementById("application-error");
 
   if (applicationForm && applicationSuccess) {
     applicationForm.addEventListener("submit", function (event) {
       event.preventDefault();
       if (!applicationForm.reportValidity()) return;
-      applicationForm.hidden = true;
-      applicationSuccess.hidden = false;
-      applicationSuccess.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      var submitBtn = applicationForm.querySelector("button[type=submit]");
+      var formData = new FormData(applicationForm);
+
+      if (applicationError) applicationError.hidden = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting…";
+      }
+
+      fetch("/api/apply", {
+        method: "POST",
+        body: formData,
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Submission failed");
+          applicationForm.hidden = true;
+          applicationSuccess.hidden = false;
+          applicationSuccess.scrollIntoView({ behavior: "smooth", block: "start" });
+        })
+        .catch(function () {
+          if (applicationError) applicationError.hidden = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Application";
+          }
+        });
     });
   }
 
