@@ -579,7 +579,8 @@ section {
 }
 
 @media (max-width: 880px) {
-  .services-grid {
+  .services-grid,
+  .services-grid-2 {
     grid-template-columns: 1fr;
   }
 }
@@ -1180,6 +1181,7 @@ section {
   border: none;
   margin: 0;
   padding: 0;
+  min-width: 0;
 }
 
 .form-field[hidden] {
@@ -1268,11 +1270,13 @@ section {
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .file-upload input[type="file"] {
   font-family: var(--font-body);
   font-size: 0.92rem;
+  max-width: 100%;
 }
 
 .file-upload-name {
