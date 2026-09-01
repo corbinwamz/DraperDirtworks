@@ -757,7 +757,7 @@ section {
 
 .process-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 32px;
 }
 
@@ -936,6 +936,106 @@ section {
 .belief p {
   color: var(--color-ink-muted);
   font-size: 0.97rem;
+}
+
+/* ============================================================
+   Testimonials
+   ============================================================ */
+
+.testimonials-viewport {
+  overflow: hidden;
+  margin: 48px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+.testimonials-track {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  width: max-content;
+  padding-inline: 24px;
+  animation: testimonials-scroll 75s linear infinite;
+}
+
+.testimonials-viewport:hover .testimonials-track {
+  animation-play-state: paused;
+}
+
+@keyframes testimonials-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-card {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  padding: 28px 26px;
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 3px;
+}
+
+.star-icon {
+  width: 15px;
+  height: 15px;
+  fill: var(--color-red-600);
+}
+
+.testimonial-card p {
+  flex: 1;
+  color: var(--color-ink);
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.testimonial-card footer {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-muted);
+}
+
+.testimonial-card cite {
+  font-style: normal;
+  color: var(--color-navy-800);
+}
+
+.testimonials-cta {
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .testimonial-card {
+    flex-basis: 280px;
+    padding: 24px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-track {
+    animation: none !important;
+    width: auto;
+  }
+  .testimonial-dup {
+    display: none;
+  }
+  .testimonials-viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
 
 /* ============================================================
