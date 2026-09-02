@@ -572,65 +572,6 @@ section {
    Services
    ============================================================ */
 
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-@media (max-width: 880px) {
-  .services-grid,
-  .services-grid-2 {
-    grid-template-columns: 1fr;
-  }
-}
-
-.service-card {
-  display: flex;
-  flex-direction: column;
-  background: var(--color-white);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius);
-  padding: 36px 32px;
-  transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out),
-    transform 0.2s var(--ease-out);
-}
-
-.service-card:hover {
-  border-color: var(--color-navy-800);
-  box-shadow: var(--shadow-card);
-  transform: translateY(-3px);
-}
-
-.service-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius);
-  background: var(--color-navy-800);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 22px;
-}
-
-.service-icon svg {
-  width: 28px;
-  height: 28px;
-  color: var(--color-white);
-}
-
-.service-card h3 {
-  font-size: 1.3rem;
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.service-card p {
-  color: var(--color-ink-muted);
-  font-size: 0.98rem;
-}
-
 .card-link {
   display: inline-flex;
   align-items: center;
@@ -651,105 +592,140 @@ section {
   text-decoration: underline;
 }
 
-.services-grid-2 {
+/* Capability sections: kicker + description, plus either a
+   plain inline job list or a card-link. No card boxes, shadows,
+   or icon tiles — typography and rules carry the hierarchy. */
+.capabilities {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+}
+
+@media (max-width: 780px) {
+  .capabilities {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px 32px;
+}
+
+.capability-grid-2 {
   grid-template-columns: repeat(2, 1fr);
 }
 
-.services-grid-4 {
-  grid-template-columns: repeat(4, 1fr);
+.capability-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 @media (max-width: 1080px) {
-  .services-grid-4 {
+  .capability-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
+@media (max-width: 880px) {
+  .capability-grid-2,
+  .capability-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 560px) {
-  .services-grid-4 {
+  .capability-grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* Services section: two primary hub cards + a compact row of
-   the specific jobs each hub covers, so the section reads as
-   one hierarchy instead of N equal-weight cards. */
-.services-primary {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
-  margin-bottom: 56px;
+.capability-head {
+  border-top: 3px solid var(--color-red-600);
+  padding-top: 16px;
+  margin-bottom: 20px;
 }
 
-@media (max-width: 720px) {
-  .services-primary {
-    grid-template-columns: 1fr;
-    margin-bottom: 40px;
-  }
-}
-
-.services-extra-title {
-  text-align: center;
-  font-size: 1.1rem;
-  margin-bottom: 24px;
-}
-
-.services-tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
-}
-
-.service-tag {
+.capability-head h3 {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: var(--color-white);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius);
-  padding: 12px 20px 12px 12px;
-  color: var(--color-ink);
-  text-decoration: none;
+  gap: 10px;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-navy-800);
+  margin: 0 0 10px;
+}
+
+.capability-head h3 .capability-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  color: var(--color-navy-800);
+}
+
+.capability-head p {
+  color: var(--color-ink-muted);
+  font-size: 0.98rem;
+  margin: 0 0 14px;
+}
+
+.capability-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 28px;
+  row-gap: 4px;
+}
+
+.capability-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  position: relative;
   font-family: var(--font-display);
   text-transform: uppercase;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   letter-spacing: 0.01em;
-  transition:
-    border-color 0.2s var(--ease-out),
-    box-shadow 0.2s var(--ease-out),
-    transform 0.2s var(--ease-out);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: color 0.2s var(--ease-out);
 }
 
-.service-tag:hover {
-  border-color: var(--color-navy-800);
-  box-shadow: var(--shadow-card);
-  transform: translateY(-2px);
+.capability-list a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 4px;
+  height: 2px;
+  background: var(--color-red-600);
+  transition: right 0.2s var(--ease-out);
 }
 
-.service-tag-icon {
-  width: 34px;
-  height: 34px;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-navy-800);
-  border-radius: var(--radius);
-}
-
-.service-tag-icon svg {
+.capability-list a svg {
   width: 18px;
   height: 18px;
-  color: var(--color-white);
+  flex: none;
+  color: var(--color-navy-800);
+  transition: color 0.2s var(--ease-out);
 }
 
-@media (max-width: 560px) {
-  .services-tag-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.capability-list a:hover {
+  color: var(--color-red-600);
+}
+
+.capability-list a:hover::after {
+  right: 0;
+}
+
+.capability-list a:hover svg {
+  color: var(--color-red-600);
 }
 
 /* ============================================================
