@@ -1123,7 +1123,9 @@ section {
   animation: testimonials-scroll 75s linear infinite;
 }
 
-.testimonials-viewport:hover .testimonials-track {
+/* Pause on keyboard focus only — hover-pausing froze the strip whenever the
+   cursor passed over it while scrolling the page. */
+.testimonials-viewport:focus-within .testimonials-track {
   animation-play-state: paused;
 }
 
