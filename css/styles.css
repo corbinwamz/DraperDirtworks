@@ -256,12 +256,22 @@ section {
   border-bottom: 1px solid var(--color-line);
 }
 
+/* The header bar runs wider than the page container so the logo and the
+   phone/directions links sit nearer the window edges on large screens. */
 .site-header .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
   padding-block: 14px;
+  max-width: 1520px;
+  padding-inline: 40px;
+}
+
+@media (max-width: 1080px) {
+  .site-header .container {
+    padding-inline: 24px;
+  }
 }
 
 .brand {
@@ -280,6 +290,36 @@ section {
   display: flex;
   align-items: center;
   gap: 36px;
+}
+
+/* Desktop header order: logo + page links on the left, then the contact
+   group (phone, directions) and the estimate button last on the right.
+   `display: contents` lets the nav's list and button be positioned
+   independently in the header row without duplicating any markup; below
+   the breakpoint the nav goes back to being a real box for the menu. */
+@media (min-width: 921px) {
+  .site-header .container {
+    /* The list's auto margin does the spacing now, so the row packs from
+       the left instead of spreading the four items evenly. */
+    justify-content: flex-start;
+  }
+
+  .main-nav {
+    display: contents;
+  }
+
+  .site-header .main-nav ul {
+    margin-right: auto;
+    margin-left: 24px;
+  }
+
+  .header-actions {
+    order: 1;
+  }
+
+  .main-nav .btn {
+    order: 2;
+  }
 }
 
 .main-nav ul {
@@ -346,6 +386,27 @@ section {
   width: 18px;
   height: 18px;
   color: var(--color-red-600);
+}
+
+/* Directions link sits beside the phone, separated by a hairline rule. */
+.header-address {
+  padding-left: 20px;
+  border-left: 1px solid var(--color-line);
+  font-weight: 600;
+}
+
+.header-address:hover span {
+  text-decoration: underline;
+}
+
+@media (max-width: 1180px) {
+  .header-address span {
+    display: none;
+  }
+
+  .header-address {
+    padding-left: 16px;
+  }
 }
 
 .nav-toggle {
@@ -436,10 +497,46 @@ section {
   height: 100%;
 }
 
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 56px;
+  align-items: center;
+}
+
+@media (max-width: 880px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
 .hero-inner {
   position: relative;
   z-index: 1;
   max-width: 760px;
+}
+
+.hero-media {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+}
+
+.hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 560px) {
+  .hero-media {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 .hero h1 {
@@ -686,6 +783,15 @@ section {
   margin-bottom: 20px;
 }
 
+/* In a grid, let each card fill its row so the trailing card-link
+   (margin-top: auto) lines up across columns regardless of copy length. */
+.capability-grid > .capability-head {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-bottom: 0;
+}
+
 .capability-head h3 {
   display: flex;
   align-items: center;
@@ -885,7 +991,7 @@ section {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: 48px;
-  align-items: center;
+  align-items: stretch;
 }
 
 @media (max-width: 880px) {
@@ -903,13 +1009,43 @@ section {
   margin-bottom: 0;
 }
 
+.story-copy-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 880px) {
+  .story-copy-middle {
+    display: block;
+  }
+}
+
 .story-photo {
-  aspect-ratio: 4 / 5;
+  position: relative;
   border-radius: var(--radius);
   overflow: hidden;
+  height: 100%;
+}
+
+@media (max-width: 880px) {
+  .story-photo {
+    aspect-ratio: 4 / 5;
+    height: auto;
+  }
+}
+
+/* Taller crop for portrait source photos so more of the shot stays visible
+   instead of being squashed to the text column's height. */
+.story-photo-tall {
+  align-self: start;
+  height: auto;
+  aspect-ratio: 4 / 5;
 }
 
 .story-photo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
