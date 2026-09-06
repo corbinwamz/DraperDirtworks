@@ -161,7 +161,7 @@
 
               <div class="form-field">
                 <label for="haul-amount">Amount <span class="required">*</span></label>
-                <input type="number" id="haul-amount" name="amount" min="1" step="1" inputmode="numeric" required />
+                <input type="number" id="haul-amount" name="amount" min="1" max="1000" step="1" inputmode="numeric" required />
               </div>
 
               <div class="form-field form-field-full">
@@ -171,9 +171,19 @@
 
               <div class="form-field form-field-full">
                 <label for="haul-message">Additional Details</label>
-                <textarea id="haul-message" name="message" rows="3" placeholder="Anything else we should know about the job"></textarea>
+                <textarea id="haul-message" name="message" rows="3" maxlength="2000" placeholder="Anything else we should know about the job"></textarea>
               </div>
             </div>
+
+            <!-- Spam traps. Deliberately not type="hidden": bots skip those but
+                 will fill a normal text input they can see in the markup. Kept
+                 out of the tab order and the accessibility tree so nobody real
+                 hits it. The elapsed field is stamped by main.js on submit. -->
+            <div class="form-hp" aria-hidden="true">
+              <label for="haul-website">Website</label>
+              <input type="text" id="haul-website" name="website" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="elapsed" value="" />
 
             <p class="form-disclaimer">
               Jobs within 15 miles needing four loads or fewer get instant flat-rate
@@ -269,9 +279,16 @@
 
               <div class="form-field form-field-full">
                 <label for="excav-message">Project Details</label>
-                <textarea id="excav-message" name="message" rows="4" placeholder="Scope of work, timeline, or anything else we should know"></textarea>
+                <textarea id="excav-message" name="message" rows="4" maxlength="2000" placeholder="Scope of work, timeline, or anything else we should know"></textarea>
               </div>
             </div>
+
+            <!-- Spam traps. See the matching block in the hauling form above. -->
+            <div class="form-hp" aria-hidden="true">
+              <label for="excav-website">Website</label>
+              <input type="text" id="excav-website" name="website" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="elapsed" value="" />
 
             <p class="form-disclaimer">
               The owner will review your project and reach out directly with a quote.

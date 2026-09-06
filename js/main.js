@@ -34,6 +34,22 @@
     });
   }
 
+  // Stamps how long the form was on screen before submitting, for the
+  // server-side bot check. Measured entirely in the browser as a single
+  // subtraction, so a wrong client clock can't skew it. Bound on document in
+  // the capture phase so it always runs before a form's own submit handler
+  // builds its FormData.
+  var pageLoadedAt = Date.now();
+
+  document.addEventListener(
+    "submit",
+    function (event) {
+      var elapsedField = event.target.querySelector("input[name=elapsed]");
+      if (elapsedField) elapsedField.value = String(Date.now() - pageLoadedAt);
+    },
+    true
+  );
+
   var applicationForm = document.getElementById("application-form");
   var applicationSuccess = document.getElementById("application-success");
   var applicationError = document.getElementById("application-error");

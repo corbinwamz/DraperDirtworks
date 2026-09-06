@@ -47,10 +47,28 @@ function firstValue(v) {
   return Array.isArray(v) ? v[0] : v;
 }
 
+// Cheap bot filters that need no shared state (so they work fine across
+// serverless instances): a honeypot field real users never see, and how long
+// the form was on screen. Both fail open — a missing or unparseable value is
+// never treated as automated, so a real applicant is never turned away by it.
+const MIN_FILL_MS = 3000;
+
+function looksAutomated(fields) {
+  const honeypot = firstValue(fields.website);
+  if (typeof honeypot === "string" && honeypot.trim()) return true;
+
+  const elapsed = parseInt(String(firstValue(fields.elapsed) || ""), 10);
+  return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < MIN_FILL_MS;
+}
+
 function parseMultipart(req) {
   const form = formidable({
     maxFileSize: MAX_RESUME_BYTES,
     maxTotalFileSize: MAX_RESUME_BYTES,
+    // Text fields are capped separately from the resume. ~7KB covers every
+    // field at its maximum length; formidable would otherwise allow 20MB.
+    maxFields: 25,
+    maxFieldsSize: 100 * 1024,
     multiples: false,
     allowEmptyFiles: true,
     minFileSize: 0,
@@ -61,6 +79,29 @@ function parseMultipart(req) {
       else resolve({ fields, files });
     });
   });
+}
+
+// formidable streams every upload to a temp file. Vercel's /tmp is capped at
+// 512MB and shared by every request a warm instance handles, so a file left
+// behind is a slow leak that eventually breaks uploads for real applicants.
+// Never allowed to fail the request — a cleanup problem is ours, not theirs.
+async function cleanupTempFiles(files) {
+  if (!files) return;
+
+  // formidable hands back either a single file or an array per field.
+  const uploads = Object.values(files).flat().filter(Boolean);
+
+  await Promise.all(
+    uploads
+      .filter((file) => file.filepath)
+      .map((file) =>
+        fs.promises.unlink(file.filepath).catch((err) => {
+          if (err.code !== "ENOENT") {
+            console.error("Failed to remove temp upload:", err);
+          }
+        })
+      )
+  );
 }
 
 let sheetsClientPromise = null;
@@ -149,6 +190,14 @@ function getDriveClient() {
   return google.drive({ version: "v3", auth: oauth2Client });
 }
 
+// The complete set of accepted resume types. Doubles as the source of the
+// stored file's extension, so the name on disk always matches the content.
+const EXTENSION_BY_MIME = {
+  "application/pdf": ".pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+  "application/msword": ".doc",
+};
+
 // Sniffs the file's real content instead of trusting its extension or
 // declared content-type, both of which are trivial to spoof.
 async function detectResumeMimeType(filepath, originalFilename) {
@@ -180,7 +229,10 @@ async function uploadResumeToDrive(applicantName, file) {
     return { link: "Invalid file type submitted", uploaded: false };
   }
 
-  const ext = path.extname(file.originalFilename || "") || "";
+  // Extension comes from the type we detected, never from the submitted
+  // filename — otherwise a genuine PDF uploaded as "resume.exe" would be
+  // stored with that extension and be dangerous to whoever downloads it.
+  const ext = EXTENSION_BY_MIME[mimeType];
   const safeName =
     applicantName
       .replace(/[^a-z0-9 \-]/gi, "")
@@ -261,6 +313,22 @@ module.exports = async function handler(req, res) {
       .json({ ok: false, error: "Could not read submission (file may be too large)" });
   }
 
+  // The work is delegated so this finally covers every exit below it — the
+  // bot filter, a validation error, a failed upload, or success.
+  try {
+    return await processApplication(res, fields, files);
+  } finally {
+    await cleanupTempFiles(files);
+  }
+};
+
+async function processApplication(res, fields, files) {
+  // Accept and discard silently. A bot that gets a 200 has no signal that it
+  // was caught, so nothing is written, uploaded, or emailed.
+  if (looksAutomated(fields)) {
+    return res.status(200).json({ ok: true });
+  }
+
   const name = cleanText(firstValue(fields.name), 120);
   const phone = cleanText(firstValue(fields.phone), 40);
   const email = cleanText(firstValue(fields.email), 200);
@@ -338,4 +406,18 @@ module.exports = async function handler(req, res) {
   }
 
   return res.status(200).json({ ok: true });
+}
+
+// Internals exposed for the test suite only. Not part of the HTTP contract —
+// nothing outside test/ should import these.
+module.exports.__testing = {
+  cleanText,
+  cleanEnum,
+  isValidEmail,
+  looksAutomated,
+  cleanupTempFiles,
+  detectResumeMimeType,
+  EXTENSION_BY_MIME,
+  POSITION_LABELS,
+  MIN_FILL_MS,
 };

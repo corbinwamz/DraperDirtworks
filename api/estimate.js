@@ -64,8 +64,29 @@ function firstValue(v) {
   return Array.isArray(v) ? v[0] : v;
 }
 
+// Cheap bot filters that need no shared state (so they work fine across
+// serverless instances): a honeypot field real users never see, and how long
+// the form was on screen. Both fail open — a missing or unparseable value is
+// never treated as automated, so a real customer is never turned away by it.
+const MIN_FILL_MS = 3000;
+
+function looksAutomated(fields) {
+  const honeypot = firstValue(fields.website);
+  if (typeof honeypot === "string" && honeypot.trim()) return true;
+
+  const elapsed = parseInt(String(firstValue(fields.elapsed) || ""), 10);
+  return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < MIN_FILL_MS;
+}
+
 function parseMultipart(req) {
-  const form = formidable({ multiples: false });
+  // Caps well above what the form legitimately sends (~3KB across a dozen
+  // fields), but far below formidable's 20MB default — enough to stop a
+  // request that exists only to make us allocate memory.
+  const form = formidable({
+    multiples: false,
+    maxFields: 25,
+    maxFieldsSize: 100 * 1024,
+  });
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields) => {
       if (err) reject(err);
@@ -237,6 +258,13 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ ok: false, error: "Could not read submission" });
   }
 
+  // Checked before anything else: this is the path that would otherwise spend
+  // a billed Geocoding call on a bot. Accept and discard silently so it gets
+  // no signal that it was caught.
+  if (looksAutomated(fields)) {
+    return res.status(200).json({ ok: true, submitted: true });
+  }
+
   const rawType = firstValue(fields.type);
   const type = rawType === "hauling" || rawType === "excavation" ? rawType : null;
 
@@ -255,8 +283,11 @@ module.exports = async function handler(req, res) {
   const service = cleanEnum(rawService, SERVICE_LABELS);
   const serviceOther = cleanText(firstValue(fields.serviceOther), 120);
 
+  // Length-capped before the digit test so a very long numeric string can't
+  // become an absurd quantity in the sheet.
   const rawAmount = String(firstValue(fields.amount) || "").trim();
-  const amount = /^[0-9]+$/.test(rawAmount) ? parseInt(rawAmount, 10) : null;
+  const amount =
+    rawAmount.length <= 5 && /^[0-9]+$/.test(rawAmount) ? parseInt(rawAmount, 10) : null;
 
   const errors = [];
   if (!type) errors.push("type");
@@ -267,7 +298,7 @@ module.exports = async function handler(req, res) {
 
   if (type === "hauling") {
     if (!material) errors.push("material");
-    if (amount === null || amount < 1) errors.push("amount");
+    if (amount === null || amount < 1 || amount > 1000) errors.push("amount");
     if (!unit) errors.push("unit");
   } else if (type === "excavation") {
     if (!projectType) errors.push("projectType");
@@ -398,4 +429,19 @@ module.exports = async function handler(req, res) {
   }
 
   return res.status(200).json({ ok: true, submitted: true });
+};
+
+// Internals exposed for the test suite only. Not part of the HTTP contract —
+// nothing outside test/ should import these.
+module.exports.__testing = {
+  cleanText,
+  cleanEnum,
+  isValidEmail,
+  looksAutomated,
+  haversineMiles,
+  parseCoords,
+  calculatePlaceholderEstimate,
+  MATERIAL_LABELS,
+  UNIT_LABELS,
+  MIN_FILL_MS,
 };

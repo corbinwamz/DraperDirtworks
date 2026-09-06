@@ -254,6 +254,7 @@
               id="app-equipment"
               name="equipment"
               rows="3"
+              maxlength="2000"
               placeholder="e.g. dump truck, excavator, skid steer, loader"
             ></textarea>
           </div>
@@ -274,12 +275,12 @@
 
           <div class="form-field form-field-full">
             <label for="app-strength">What do you consider to be your greatest strength as a driver or operator? <span class="required">*</span></label>
-            <textarea id="app-strength" name="strength" rows="3" required></textarea>
+            <textarea id="app-strength" name="strength" rows="3" maxlength="2000" required></textarea>
           </div>
 
           <div class="form-field form-field-full">
             <label for="app-message">Tell us about yourself</label>
-            <textarea id="app-message" name="message" rows="4" placeholder="Anything else you'd like us to know"></textarea>
+            <textarea id="app-message" name="message" rows="4" maxlength="2000" placeholder="Anything else you'd like us to know"></textarea>
           </div>
 
           <div class="form-field form-field-full">
@@ -290,6 +291,16 @@
             </div>
           </div>
         </div>
+
+        <!-- Spam traps. Deliberately not type="hidden": bots skip those but
+             will fill a normal text input they can see in the markup. Kept out
+             of the tab order and the accessibility tree so nobody real hits it.
+             The elapsed field is stamped by main.js on submit. -->
+        <div class="form-hp" aria-hidden="true">
+          <label for="app-website">Website</label>
+          <input type="text" id="app-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <input type="hidden" name="elapsed" value="" />
 
         <p class="form-disclaimer">
           Your information is reviewed by Draper Dirtworks only and is never shared or made public.

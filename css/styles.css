@@ -1450,6 +1450,18 @@ section {
   color: var(--color-ink-muted);
 }
 
+/* Honeypot wrapper. Moved off-screen rather than display:none or
+   visibility:hidden — bots commonly skip fields hidden that way, but will fill
+   one that is merely positioned away. Real users can't reach it: the field is
+   aria-hidden and out of the tab order. */
+.form-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .form-disclaimer {
   margin-top: 28px;
   font-size: 0.85rem;
