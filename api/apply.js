@@ -107,11 +107,25 @@ async function cleanupTempFiles(files) {
 let sheetsClientPromise = null;
 let sheetIdPromise = null;
 
+// The key is a JSON blob pasted into a dashboard field, where it easily picks
+// up wrapping quotes from a shell-style copy. Strip a matching pair rather
+// than fail every submission over it.
+function parseServiceAccountKey(rawKey) {
+  let s = typeof rawKey === "string" ? rawKey.trim() : "";
+  if (!s) throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY is not set");
+  if ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"'))) {
+    s = s.slice(1, -1).trim();
+  }
+  try {
+    return JSON.parse(s);
+  } catch {
+    throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY is not valid JSON");
+  }
+}
+
 function getSheetsClient() {
   if (!sheetsClientPromise) {
-    const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-    if (!rawKey) throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY is not set");
-    const credentials = JSON.parse(rawKey);
+    const credentials = parseServiceAccountKey(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
@@ -430,6 +444,7 @@ module.exports.__testing = {
   looksAutomated,
   cleanupTempFiles,
   detectResumeMimeType,
+  parseServiceAccountKey,
   EXTENSION_BY_MIME,
   POSITION_LABELS,
   MIN_FILL_MS,

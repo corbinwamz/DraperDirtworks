@@ -242,6 +242,24 @@ test("detectResumeMimeType accepts a docx by its zip contents", async () => {
   assert.equal(await sniff(DOCX_BYTES, "resume.exe"), expected);
 });
 
+test("parseServiceAccountKey tolerates a quote-wrapped dashboard paste", () => {
+  const { parseServiceAccountKey } = apply;
+  const json = '{"type":"service_account","project_id":"dd"}';
+  assert.deepEqual(parseServiceAccountKey(json), JSON.parse(json));
+  assert.deepEqual(parseServiceAccountKey("'" + json + "'"), JSON.parse(json));
+  assert.deepEqual(parseServiceAccountKey('"' + json + '"'), JSON.parse(json));
+  assert.deepEqual(parseServiceAccountKey("  " + json + "\n"), JSON.parse(json));
+});
+
+test("parseServiceAccountKey reports missing and malformed keys distinctly", () => {
+  const { parseServiceAccountKey } = apply;
+  assert.throws(() => parseServiceAccountKey(undefined), /is not set/);
+  assert.throws(() => parseServiceAccountKey("   "), /is not set/);
+  assert.throws(() => parseServiceAccountKey("{nope"), /not valid JSON/);
+  // A lone leading quote is not a matching pair, so it stays malformed.
+  assert.throws(() => parseServiceAccountKey("'{\"a\":1}"), /not valid JSON/);
+});
+
 test("every accepted mime type maps to a stored extension", () => {
   const { EXTENSION_BY_MIME } = apply;
   const accepted = [
