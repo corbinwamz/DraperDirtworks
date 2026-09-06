@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/corbinwamz/DraperDirtworks#readme",
   "dependencies": {
-    "file-type": "^22.0.2",
     "formidable": "^3.5.4",
     "googleapis": "^176.0.0"
   }

@@ -198,26 +198,39 @@ const EXTENSION_BY_MIME = {
   "application/msword": ".doc",
 };
 
+const PDF_MAGIC = Buffer.from("%PDF-");
+const ZIP_MAGIC = Buffer.from([0x50, 0x4b, 0x03, 0x04]); // local file header
+// OLE2 compound file, the container behind legacy .doc/.xls/.msi.
+const CFB_MAGIC = Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]);
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
 // Sniffs the file's real content instead of trusting its extension or
-// declared content-type, both of which are trivial to spoof.
+// declared content-type, both of which are trivial to spoof. Only three
+// magic numbers matter here, so we read them directly rather than pull in a
+// sniffing library (uploads are capped at MAX_RESUME_BYTES, so reading the
+// whole file is cheap).
 async function detectResumeMimeType(filepath, originalFilename) {
-  const { fileTypeFromFile } = await import("file-type");
-  const detected = await fileTypeFromFile(filepath);
+  let buf;
+  try {
+    buf = await fs.promises.readFile(filepath);
+  } catch {
+    return null;
+  }
   const ext = path.extname(originalFilename || "").toLowerCase();
 
-  if (detected && detected.mime === "application/pdf") {
+  if (buf.subarray(0, PDF_MAGIC.length).equals(PDF_MAGIC)) {
     return "application/pdf";
   }
-  if (
-    detected &&
-    detected.mime ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
-    return detected.mime;
+  if (buf.subarray(0, ZIP_MAGIC.length).equals(ZIP_MAGIC)) {
+    // A .docx is a zip; what makes it a Word document is the word/ part
+    // inside. Its name appears in both the local headers and the central
+    // directory, so a plain zip renamed .docx is rejected here.
+    return buf.includes("word/document.xml") ? DOCX_MIME : null;
   }
-  if (detected && detected.ext === "cfb" && ext === ".doc") {
-    // Legacy binary .doc only sniffs as a generic compound-file container;
-    // pair it with the declared extension to accept it.
+  if (buf.subarray(0, CFB_MAGIC.length).equals(CFB_MAGIC) && ext === ".doc") {
+    // The legacy container is shared with .xls and .msi, so pair it with the
+    // declared extension before accepting it.
     return "application/msword";
   }
   return null;

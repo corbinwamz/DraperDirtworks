@@ -188,6 +188,16 @@ const CFB_BYTES = Buffer.concat([
 ]);
 const EXE_BYTES = Buffer.concat([Buffer.from("MZ"), Buffer.alloc(256, 0)]);
 const EMPTY_ZIP = Buffer.concat([Buffer.from("PK\x05\x06", "binary"), Buffer.alloc(18, 0)]);
+const ZIP_HEADER = Buffer.concat([Buffer.from("PK\x03\x04", "binary"), Buffer.alloc(26, 0)]);
+// A zip that carries no Word part is not a .docx, however it is named.
+const PLAIN_ZIP = Buffer.concat([ZIP_HEADER, Buffer.from("notes.txt"), Buffer.alloc(64, 0)]);
+const DOCX_BYTES = Buffer.concat([
+  ZIP_HEADER,
+  Buffer.from("[Content_Types].xml"),
+  Buffer.alloc(64, 0),
+  Buffer.from("word/document.xml"),
+  Buffer.alloc(64, 0),
+]);
 
 async function sniff(bytes, filename) {
   const p = path.join(UPLOAD_DIR, "sniff-" + Math.random().toString(16).slice(2));
@@ -221,6 +231,15 @@ test("detectResumeMimeType accepts legacy .doc only with a matching extension", 
 
 test("detectResumeMimeType rejects a plain zip that is not a .docx", async () => {
   assert.equal(await sniff(EMPTY_ZIP, "resume.docx"), null);
+  assert.equal(await sniff(PLAIN_ZIP, "resume.docx"), null);
+});
+
+test("detectResumeMimeType accepts a docx by its zip contents", async () => {
+  const expected =
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  assert.equal(await sniff(DOCX_BYTES, "resume.docx"), expected);
+  // Content decides, so a misleading name changes nothing.
+  assert.equal(await sniff(DOCX_BYTES, "resume.exe"), expected);
 });
 
 test("every accepted mime type maps to a stored extension", () => {
