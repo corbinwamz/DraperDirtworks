@@ -86,7 +86,7 @@ Two brand colors, sampled from the client's logo, govern the palette; everything
 - **Red Bright** (#b8323c): the primary button's hover state only.
 
 ### Neutral
-- **White** (#ffffff): header background, card backgrounds, primary page ground.
+- **White** (#ffffff): header background, card backgrounds, primary page ground. 
 - **Warm Paper** (#f6f4f1): the service-area section only, used to break the white/navy rhythm without introducing a third hue.
 - **Hairline** (#e2ddd4): all card borders and dividers.
 - **Ink** (#1b232c): body text on light backgrounds.
