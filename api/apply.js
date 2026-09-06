@@ -201,6 +201,50 @@ async function uploadResumeToDrive(applicantName, file) {
   return { link, uploaded: true };
 }
 
+// Notifies the owner that an application came in, via Resend's REST API
+// directly — one fetch call, no extra dependency. Plain text only: nothing
+// user-supplied is interpolated into HTML, so there is no escaping to get
+// wrong. Details stay minimal and link back to the sheet rather than copying
+// the whole application into an inbox.
+async function sendOwnerNotification({ name, phone, email, position, timestamp, resumeLink }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.NOTIFY_EMAIL_TO;
+  if (!apiKey || !to) return;
+
+  const from = process.env.NOTIFY_EMAIL_FROM || "Draper Dirtworks <onboarding@resend.dev>";
+  const sheetUrl = `https://docs.google.com/spreadsheets/d/${process.env.SPREADSHEET_ID}/edit`;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      // Lets the owner reply straight to the applicant without the From
+      // address forging a domain we don't control.
+      reply_to: email,
+      subject: `New application: ${name} - ${position}`,
+      text: [
+        `${name} applied for ${position}.`,
+        "",
+        `Phone: ${phone}`,
+        `Email: ${email}`,
+        `Resume: ${resumeLink}`,
+        `Submitted: ${timestamp}`,
+        "",
+        `Full details: ${sheetUrl}`,
+      ].join("\n"),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Resend responded ${response.status}: ${await response.text()}`);
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -281,6 +325,16 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error("Failed to write application to sheet:", err);
     return res.status(500).json({ ok: false, error: "Could not submit application" });
+  }
+
+  // Best-effort, and awaited rather than fire-and-forget: the function can be
+  // frozen the moment we respond. The sheet is the record of truth, so a
+  // failed notification must never turn a successful application into an
+  // error for the applicant.
+  try {
+    await sendOwnerNotification({ name, phone, email, position, timestamp, resumeLink });
+  } catch (err) {
+    console.error("Failed to send application notification:", err);
   }
 
   return res.status(200).json({ ok: true });
